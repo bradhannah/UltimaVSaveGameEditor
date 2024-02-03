@@ -16,7 +16,7 @@ typedef struct CutSceneMap {
 };
 
 typedef struct IntroMap {
-    struct IntroMapRow {
+    struct IntroMapRow {.
         ubyte tiles[0x13];
         ubyte zero_padding[13];
     } intro_map_row[4] <optimize=false>;
