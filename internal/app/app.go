@@ -1,25 +1,54 @@
 package main
 
-import "github.com/rivo/tview"
+import (
+	"UltimaVSaveGameEditor/pkg/ultima_v_save"
+	"UltimaVSaveGameEditor/pkg/ultima_v_save/widgets"
+	"github.com/rivo/tview"
+)
 
 type UltimaVSaveGameEditorApp struct {
-	app       *tview.Application
-	mainPages *tview.Pages
+	app           *tview.Application
+	leftSidePages *tview.Pages // dynamic pages
+	mainFlex      *tview.Flex  // main screen
+
+	rightSideFlex *tview.Flex
+
+	partySummaryWidget *widgets.PartySummaryWidget
 }
 
 var ultimaVSaveGameEditorApp = UltimaVSaveGameEditorApp{}
 
 func _initApp() {
-	ultimaVSaveGameEditorApp.mainPages = tview.NewPages()
-	mainBox := tview.NewBox()
-	mainBox.SetBorder(true)
-	ultimaVSaveGameEditorApp.mainPages.AddPage("MainBox", mainBox, true, true)
-	ultimaVSaveGameEditorApp.app = tview.NewApplication().SetRoot(ultimaVSaveGameEditorApp.mainPages, true)
+	ultimaVSaveGameEditorApp.leftSidePages = tview.NewPages()
+	ultimaVSaveGameEditorApp.leftSidePages.AddPage("MainFlex", tview.NewBox().SetBorder(true), true, true)
+	ultimaVSaveGameEditorApp.leftSidePages.SetTitle("Edit")
+	ultimaVSaveGameEditorApp.leftSidePages.SetBorder(true)
+
+	ultimaVSaveGameEditorApp.rightSideFlex = tview.NewFlex()
+	ultimaVSaveGameEditorApp.rightSideFlex.SetBorder(true)
+	ultimaVSaveGameEditorApp.rightSideFlex.SetTitle("Just Da Facts")
+
+	ultimaVSaveGameEditorApp.partySummaryWidget = &widgets.PartySummaryWidget{}
+	ultimaVSaveGameEditorApp.partySummaryWidget.Init()
+
+	ultimaVSaveGameEditorApp.rightSideFlex.AddItem(ultimaVSaveGameEditorApp.partySummaryWidget.Table, 0, 1, false)
+
+	ultimaVSaveGameEditorApp.mainFlex = tview.NewFlex()
+	ultimaVSaveGameEditorApp.mainFlex.AddItem(ultimaVSaveGameEditorApp.leftSidePages, 0, 1, true)
+	ultimaVSaveGameEditorApp.mainFlex.AddItem(ultimaVSaveGameEditorApp.rightSideFlex, 0, 1, false)
+
+	ultimaVSaveGameEditorApp.app = tview.NewApplication().SetRoot(ultimaVSaveGameEditorApp.mainFlex, true)
 }
 
 func main() {
 	_initApp()
-	err := ultimaVSaveGameEditorApp.app.Run()
+
+	_, err := ultima_v_save.GetCharactersFromSave("/Users/bradhannah/Google Drive/My Drive/games/u5/Games/Ultima_5/Gold/SAVED.GAM")
+	if err != nil {
+		return
+	}
+
+	err = ultimaVSaveGameEditorApp.app.Run()
 	if err != nil {
 		panic("This is bad man...")
 	}
