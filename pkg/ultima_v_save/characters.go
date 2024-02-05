@@ -42,8 +42,13 @@ func GetCharactersFromSave(savedGamFilePath string) (*SaveGame, error) {
 
 	var saveGame = SaveGame{}
 
-	characterPtr := (*[6]Player)(unsafe.Pointer(&buffer[startPositionOfCharacters]))
-	fmt.Printf("%d", len(characterPtr))
+	// Overlay player characters over memory buffer to easily consume data
+	characterPtr := (*[NPlayers]PlayerCharacter)(unsafe.Pointer(&buffer[startPositionOfCharacters]))
+	saveGame.Characters = *characterPtr
 
 	return &saveGame, nil
+}
+
+func (p *PlayerCharacter) GetNameAsString() string {
+	return string(p.Name[:])
 }

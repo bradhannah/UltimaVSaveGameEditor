@@ -3,6 +3,8 @@ package ultima_v_save
 type StartingMemoryAddressUb uint16
 type StartingMemoryAddressU16 uint16
 
+const NPlayers = 6
+
 const (
 	ubPartyMembers StartingMemoryAddressUb = 0x2B5
 	ubActivePlayer                         = 0x2D5
@@ -99,22 +101,14 @@ const (
 	InInventory                 = 0xFF
 )
 
-type Character struct {
-	Name        string
-	Class       ByteIdToFriendly
-	Stats       CharacterStats
-	Status      ByteIdToFriendly
-	PartyStatus PartyStatus
-}
-
 type SaveGame struct {
-	Characters       [6]Character
+	Characters       [NPlayers]PlayerCharacter
 	Location         Location
 	BritOrUnderworld BritOrUnderworld
 	MoonstoneStatus  MoonstoneStatus
 }
 
-type Player struct {
+type PlayerCharacter struct {
 	Name         [9]byte
 	Gender       CharacterGender
 	Class        CharacterClass
