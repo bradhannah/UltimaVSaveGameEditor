@@ -3,6 +3,7 @@ package ultima_v_save
 import (
 	"fmt"
 	"os"
+	"strings"
 	"unsafe"
 )
 
@@ -50,5 +51,5 @@ func GetCharactersFromSave(savedGamFilePath string) (*SaveGame, error) {
 }
 
 func (p *PlayerCharacter) GetNameAsString() string {
-	return string(p.Name[:])
+	return strings.TrimRight(string(p.Name[:]), string(0))
 }

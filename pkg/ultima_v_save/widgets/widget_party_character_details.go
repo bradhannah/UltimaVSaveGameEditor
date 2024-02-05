@@ -9,27 +9,37 @@ type PartyCharacterDetails struct {
 	Form *tview.Form
 
 	SaveGame *ultima_v_save.SaveGame
-	//ultima_v_save.PlayerCharacter
 
-	nameTextView *tview.TextView
+	nameTextView   *tview.TextView
+	nameInputField *tview.InputField
 }
 
 func (p *PartyCharacterDetails) Init(saveGame *ultima_v_save.SaveGame) {
 	p.SaveGame = saveGame
 	p.Form = tview.NewForm()
+	p.Form.SetTitleAlign(tview.AlignTop)
 
 	p.Form.SetBorder(true)
 
 	p.nameTextView = tview.NewTextView().
-		SetText("oof").
-		SetLabelWidth(7).
+		SetLabelWidth(ultima_v_save.NMaxPlayerNameSize).
 		SetLabel("Name")
 
-	p.Form.AddFormItem(p.nameTextView)
+	p.nameInputField = createInputField("Name", "", ultima_v_save.NMaxPlayerNameSize)
+	p.nameInputField.SetAcceptanceFunc(createAcceptanceFunc(true, ultima_v_save.NMaxPlayerNameSize))
+
+	p.Form.AddFormItem(p.nameInputField)
+	p.Form.AddFormItem(p.nameInputField)
 }
 
 func (p *PartyCharacterDetails) SetPlayer(nPlayer int) {
+	if nPlayer < 0 || nPlayer >= ultima_v_save.NPlayers {
+		// just in case
+		return
+	}
 	player := p.SaveGame.Characters[nPlayer]
 
-	p.nameTextView.SetText(player.GetNameAsString())
+	name := player.GetNameAsString()
+	p.nameTextView.SetText(name)
+	p.nameInputField.SetText(name)
 }

@@ -4,6 +4,7 @@ type StartingMemoryAddressUb uint16
 type StartingMemoryAddressU16 uint16
 
 const NPlayers = 6
+const NMaxPlayerNameSize = 9
 
 const (
 	ubPartyMembers StartingMemoryAddressUb = 0x2B5
@@ -109,7 +110,7 @@ type SaveGame struct {
 }
 
 type PlayerCharacter struct {
-	Name         [9]byte
+	Name         [NMaxPlayerNameSize]byte
 	Gender       CharacterGender
 	Class        CharacterClass
 	Status       CharacterStatus
