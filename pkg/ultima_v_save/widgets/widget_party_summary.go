@@ -9,12 +9,15 @@ type PartySummaryWidget struct {
 	Table *tview.Table
 
 	header []*tview.TableCell
+
+	SaveGame *ultima_v_save.SaveGame
 }
 
-func (p *PartySummaryWidget) Init() {
+func (p *PartySummaryWidget) Init(saveGame *ultima_v_save.SaveGame, selectionChangedFunc func(nPlayer int, nJunk int)) {
+	p.SaveGame = saveGame
+
 	p.Table = tview.NewTable()
 	p.Table.SetSelectable(true, false)
-	p.Table.SetFixed(7, 0)
 	p.Table.SetBorder(bDebugBorders)
 
 	p.header = make([]*tview.TableCell, 0)
@@ -27,16 +30,13 @@ func (p *PartySummaryWidget) Init() {
 		p.Table.SetCell(0, i, cell)
 	}
 
+	p.Table.SetSelectionChangedFunc(selectionChangedFunc)
+
 	p.populateCharacters()
 }
 
 func (p *PartySummaryWidget) populateCharacters() {
-	SaveGame, err := ultima_v_save.GetCharactersFromSave("/Users/bradhannah/Google Drive/My Drive/games/u5/Games/Ultima_5/Gold/SAVED.GAM")
-	if err != nil {
-		return
-	}
-
-	for i, character := range SaveGame.Characters {
+	for i, character := range p.SaveGame.Characters {
 		row := i + 1
 		p.Table.SetCell(row, 0, createDataCellStr(character.GetNameAsString()))
 		p.Table.SetCell(row, 1, createDataCellStr(ultima_v_save.CharacterClassMap[character.Class]))
