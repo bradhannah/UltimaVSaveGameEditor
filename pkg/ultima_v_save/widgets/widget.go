@@ -1,6 +1,7 @@
 package widgets
 
 import (
+	"UltimaVSaveGameEditor/pkg/ultima_v_save"
 	"fmt"
 	"github.com/rivo/tview"
 	"unicode"
@@ -53,4 +54,16 @@ func createAcceptanceFunc(bOnlyAlpha bool, nMaxSize int) func(string, rune) bool
 		}
 		return true
 	}
+}
+
+func createDropDown(label string, nWidth int) *tview.DropDown {
+	dropDown := tview.NewDropDown()
+	dropDown.SetFieldWidth(nWidth)
+	dropDown.SetLabel(label)
+	return dropDown
+}
+
+func setCurrentDropDownOptionsByClass(characterClass ultima_v_save.CharacterClass, dropDown *tview.DropDown) {
+	nIndex := ultima_v_save.FindIndexFromSliceT[ultima_v_save.CharacterClass](ultima_v_save.CharacterClassOrderedOptions, characterClass)
+	dropDown.SetCurrentOption(nIndex)
 }

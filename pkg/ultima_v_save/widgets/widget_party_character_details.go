@@ -10,7 +10,6 @@ type PartyCharacterDetails struct {
 
 	SaveGame *ultima_v_save.SaveGame
 
-	nameTextView   *tview.TextView
 	nameInputField *tview.InputField
 	classDropDown  *tview.DropDown
 }
@@ -25,24 +24,26 @@ func (p *PartyCharacterDetails) Init(saveGame *ultima_v_save.SaveGame) {
 	p.nameInputField.SetAcceptanceFunc(createAcceptanceFunc(true, ultima_v_save.NMaxPlayerNameSize))
 	p.Form.AddFormItem(p.nameInputField)
 
-	p.classDropDown = tview.NewDropDown()
-	p.classDropDown.SetFieldWidth(ultima_v_save.NMaxPlayerNameSize)
-	p.classDropDown.SetLabel("Class")
-	updateClassDropDown(p.classDropDown)
+	p.classDropDown = createDropDown("Class", ultima_v_save.NMaxPlayerNameSize)
+	updateClassDropDown(false, p.classDropDown)
 	p.Form.AddFormItem(p.classDropDown)
 
 }
 
-func updateClassDropDown(d *tview.DropDown) {
+func updateClassDropDown(bIsAvatar bool, d *tview.DropDown) {
 	clearAllOptions(d)
+
 	d.AddOption(ultima_v_save.CharacterClassMap[ultima_v_save.Avatar], nil)
-	d.AddOption(ultima_v_save.CharacterClassMap[ultima_v_save.Fighter], nil)
-	d.AddOption(ultima_v_save.CharacterClassMap[ultima_v_save.Bard], nil)
-	d.AddOption(ultima_v_save.CharacterClassMap[ultima_v_save.Wizard], nil)
+	if !bIsAvatar {
+		d.AddOption(ultima_v_save.CharacterClassMap[ultima_v_save.Fighter], nil)
+		d.AddOption(ultima_v_save.CharacterClassMap[ultima_v_save.Bard], nil)
+		d.AddOption(ultima_v_save.CharacterClassMap[ultima_v_save.Wizard], nil)
+	}
+	d.SetCurrentOption(0)
 }
 
 func clearAllOptions(d *tview.DropDown) {
-	for i := d.GetOptionCount(); i > 0; i-- {
+	for i := d.GetOptionCount() - 1; i >= 0; i-- {
 		d.RemoveOption(i)
 	}
 }
@@ -54,6 +55,11 @@ func (p *PartyCharacterDetails) SetPlayer(nPlayer int) {
 	}
 	player := p.SaveGame.Characters[nPlayer]
 
-	name := player.GetNameAsString()
-	p.nameInputField.SetText(name)
+	updateClassDropDown(player.Class == ultima_v_save.Avatar, p.classDropDown)
+	p.setPlayerFormValues(&player)
+}
+
+func (p *PartyCharacterDetails) setPlayerFormValues(player *ultima_v_save.PlayerCharacter) {
+	p.nameInputField.SetText(player.GetNameAsString())
+	setCurrentDropDownOptionsByClass(player.Class, p.classDropDown)
 }

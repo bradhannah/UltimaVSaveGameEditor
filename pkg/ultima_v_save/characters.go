@@ -53,3 +53,19 @@ func GetCharactersFromSave(savedGamFilePath string) (*SaveGame, error) {
 func (p *PlayerCharacter) GetNameAsString() string {
 	return strings.TrimRight(string(p.Name[:]), string(0))
 }
+
+//func getClassStr(characterClass ultima_v_save.CharacterClass) string {
+//	value, bExists := ultima_v_save.CharacterClassMap[characterClass]
+//	if bExists {
+//		return value
+//	}
+//	return ""
+//}
+//
+//func getClassByStr(classStr string) (ultima_v_save.CharacterClass, bool) {
+//	characterClass, bExists := ultima_v_save.FindKeyByValueT[ultima_v_save.CharacterClass, string](ultima_v_save.CharacterClassMap, classStr)
+//	if bExists {
+//		return characterClass, true
+//	}
+//	return ultima_v_save.Avatar, false
+//}

@@ -32,6 +32,10 @@ var CharacterClassMap = map[CharacterClass]string{
 	Wizard:  "Wizard",
 }
 
+var CharacterClassOrderedOptions = []CharacterClass{
+	Avatar, Fighter, Bard, Wizard,
+}
+
 /*
 CharacterStatus
 
