@@ -4,6 +4,7 @@ import (
 	"UltimaVSaveGameEditor/pkg/ultima_v_save"
 	"fmt"
 	"github.com/rivo/tview"
+	"strconv"
 	"unicode"
 )
 
@@ -44,12 +45,47 @@ func createInputField(label string, field string, nMaxLength int) *tview.InputFi
 	return inputField
 }
 
-func createAcceptanceFunc(bOnlyAlpha bool, nMaxSize int) func(string, rune) bool {
+func createAcceptanceFunc(bOnlyAlpha bool, bOnlyNumber bool, nMaxSize int) func(string, rune) bool {
 	return func(textToCheck string, lastChar rune) bool {
-		if len(textToCheck) > nMaxSize {
+		nTextLength := len(textToCheck)
+		bIsCharacterNumber := unicode.IsNumber(lastChar)
+		if nTextLength > nMaxSize {
 			return false
 		}
+		//if nTextLength == 0 && bIsCharacterNumber {
+		//	// wish I could force it to be a value if it was empty
+		//	return true
+		//}
 		if bOnlyAlpha && !unicode.IsLetter(lastChar) {
+			return false
+		}
+		if bOnlyNumber && !bIsCharacterNumber {
+			return false
+		}
+		return true
+	}
+}
+
+func createNumericAcceptanceFunc(nMinSize uint16, nMaxSize uint16) func(string, rune) bool {
+	return func(textToCheck string, lastChar rune) bool {
+		nTextLength := len(textToCheck)
+		if nTextLength == 0 {
+			// wish I could set this to default
+			return true
+		}
+		bIsCharacterNumber := unicode.IsNumber(lastChar)
+		if !bIsCharacterNumber {
+			return false
+		}
+		nValue, err := strconv.ParseUint(textToCheck, 10, 16)
+		nValue16 := uint16(nValue)
+		if err != nil {
+			return false
+		}
+		if nTextLength == 1 && lastChar == '0' || nValue16 == 0 {
+			return false
+		}
+		if nValue16 < nMinSize || nValue16 > nMaxSize {
 			return false
 		}
 		return true
@@ -66,4 +102,10 @@ func createDropDown(label string, nWidth int) *tview.DropDown {
 func setCurrentDropDownOptionsByClass(characterClass ultima_v_save.CharacterClass, dropDown *tview.DropDown) {
 	nIndex := ultima_v_save.FindIndexFromSliceT[ultima_v_save.CharacterClass](ultima_v_save.CharacterClassOrderedOptions, characterClass)
 	dropDown.SetCurrentOption(nIndex)
+}
+
+func clearAllOptionsInDropDown(d *tview.DropDown) {
+	for i := d.GetOptionCount() - 1; i >= 0; i-- {
+		d.RemoveOption(i)
+	}
 }

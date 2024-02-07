@@ -51,7 +51,7 @@ func GetCharactersFromSave(savedGamFilePath string) (*SaveGame, error) {
 }
 
 func (p *PlayerCharacter) GetNameAsString() string {
-	return strings.TrimRight(string(p.Name[:]), string(0))
+	return strings.TrimRight(string(p.Name[:]), string(rune(0)))
 }
 
 //func getClassStr(characterClass ultima_v_save.CharacterClass) string {
