@@ -1,4 +1,8 @@
 PROJECT_NAME := UltimaVSaveGameEditor
+MAKEFILE_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
+MAIN_PATH := ${MAKEFILE_DIR}/cmd/ultima_v_save_game_editor
+BIN_PATH := ${MAKEFILE_DIR}/bin
+
 
 .PHONY: all format lint test build clean
 
@@ -18,7 +22,7 @@ test:
 
 build:
 	@echo "Building $(PROJECT_NAME)..."
-	@go build -o $(PROJECT_NAME)
+	cd ${MAIN_PATH}; go build -o ${BIN_PATH}/$(PROJECT_NAME)
 
 clean:
 	@echo "Cleaning up..."
