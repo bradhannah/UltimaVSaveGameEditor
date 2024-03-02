@@ -99,10 +99,24 @@ func createDropDown(label string, nWidth int) *tview.DropDown {
 	return dropDown
 }
 
-func setCurrentDropDownOptionsByClass(characterClass ultima_v_save.CharacterClass, dropDown *tview.DropDown) {
-	nIndex := ultima_v_save.FindIndexFromSliceT[ultima_v_save.CharacterClass](ultima_v_save.CharacterClassOrderedOptions, characterClass)
+func setDropDownOptionsByClass(characterClass ultima_v_save.CharacterClass, dropDown *tview.DropDown) {
+	nIndex := ultima_v_save.CharacterClasses.GetIndex(characterClass)
+	//nIndex := ultima_v_save.FindIndexFromSliceT[ultima_v_save.CharacterClass](ultima_v_save.CharacterClassOrderedOptions, characterClass)
 	dropDown.SetCurrentOption(nIndex)
 }
+
+func setDropDownByStatus(status ultima_v_save.CharacterStatus, dropDown *tview.DropDown) {
+	//nIndex := ultima_v_save.FindIndexFromSliceT[ultima_v_save.CharacterStatus](ultima_v_save.CharacterStatusOrderedOptions, status)
+	nIndex := ultima_v_save.CharacterStatuses.GetIndex(status)
+	dropDown.SetCurrentOption(nIndex)
+}
+
+//func FindIndexFromSliceT[T comparable](arr []T, target T) int {
+
+//func setDropDownByT[T comparable](value T, dropDown *tview.DropDown) {
+//	nIndex := ultima_v_save.FindIndexFromSliceT[T](ultima_v_save.CharacterStatusOrderedOptions, value)
+//	dropDown.SetCurrentOption(nIndex)
+//}
 
 func clearAllOptionsInDropDown(d *tview.DropDown) {
 	for i := d.GetOptionCount() - 1; i >= 0; i-- {

@@ -39,7 +39,7 @@ func (p *PartySummaryWidget) populateCharacters() {
 	for i, character := range p.SaveGame.Characters {
 		row := i + 1
 		p.Table.SetCell(row, 0, createDataCellStr(character.GetNameAsString()))
-		p.Table.SetCell(row, 1, createDataCellStr(ultima_v_save.CharacterClassMap[character.Class]))
+		p.Table.SetCell(row, 1, createDataCellStr(ultima_v_save.CharacterStatuses.GetStatusDetails(character.Status).FriendlyName))
 		p.Table.SetCell(row, 2, createDataCellByte(character.Level))
 	}
 }

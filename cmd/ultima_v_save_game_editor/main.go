@@ -32,6 +32,16 @@ func CreateInputHandlerTabToNext(next tview.Primitive) func(event *tcell.EventKe
 	}
 }
 
+func globalInputHandler(eventKey *tcell.EventKey) *tcell.EventKey {
+	keyRune := eventKey.Rune()
+	if keyRune == 'q' || keyRune == 'Q' {
+		app.app.Stop()
+		return nil
+	}
+
+	return eventKey
+}
+
 func _initApp() {
 	SaveGame, err := ultima_v_save.GetCharactersFromSave("/Users/bradhannah/Google Drive/My Drive/games/u5/Games/Ultima_5/Gold/SAVED.GAM")
 	if err != nil {
@@ -69,14 +79,7 @@ func _initApp() {
 
 	app.app.EnableMouse(true)
 
-	app.app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		//oof := app.app.GetFocus()
-		//offP := unsafe.Pointer(&oof)
-		//if offP == unsafe.Pointer(app.leftSidePages) {
-		//	fmt.Println("OOF")
-		//}
-		return event
-	})
+	app.app.SetInputCapture(globalInputHandler)
 
 	app.leftSidePages.SetInputCapture(CreateInputHandlerTabToNext(app.partySummaryWidget.Table))
 }

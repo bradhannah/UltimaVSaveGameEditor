@@ -25,22 +25,24 @@ const (
 	Wizard  CharacterClass = 'M'
 )
 
-var CharacterClassMap = map[CharacterClass]string{
-	Avatar:  "Avatar",
-	Fighter: "Fighter",
-	Bard:    "Bard",
-	Wizard:  "Wizard",
+var CharacterClasses = OrderedMapping[CharacterClass]{
+	{
+		Id:           Avatar,
+		FriendlyName: "Avatar",
+	},
+	{
+		Id:           Fighter,
+		FriendlyName: "Fighter",
+	}, {
+		Id:           Bard,
+		FriendlyName: "Bard",
+	},
+	{
+		Id:           Wizard,
+		FriendlyName: "Wizard",
+	},
 }
 
-var CharacterClassOrderedOptions = []CharacterClass{
-	Avatar, Fighter, Bard, Wizard,
-}
-
-/*
-CharacterStatus
-
-enum <ubyte> Status { Good = 'G', Poisoned = 'P', Charmed = 'C', Asleep = 'S', Dead = 'D' };
-*/
 type CharacterStatus byte
 
 const (
@@ -51,12 +53,27 @@ const (
 	Dead     CharacterStatus = 'D'
 )
 
-var CharacterStatusMap = map[CharacterStatus]string{
-	Good:     "Good",
-	Poisoned: "Poisoned",
-	Charmed:  "Charmed",
-	Sleep:    "Sleep",
-	Dead:     "Dead",
+var CharacterStatuses = OrderedMapping[CharacterStatus]{
+	{
+		Id:           Good,
+		FriendlyName: "Good",
+	},
+	{
+		Id:           Poisoned,
+		FriendlyName: "Poisoned",
+	},
+	{
+		Id:           Charmed,
+		FriendlyName: "Charmed",
+	},
+	{
+		Id:           Sleep,
+		FriendlyName: "Sleep",
+	},
+	{
+		Id:           Dead,
+		FriendlyName: "Dead",
+	},
 }
 
 /*

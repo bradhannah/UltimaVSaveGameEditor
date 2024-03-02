@@ -32,11 +32,10 @@ func (p *PartyCharacterDetails) Init(saveGame *ultima_v_save.SaveGame) {
 
 	// Status
 	p.statusDropDown = createDropDown("Status", 8)
-	p.statusDropDown.AddOption(ultima_v_save.CharacterStatusMap[ultima_v_save.Good], nil)
-	p.statusDropDown.AddOption(ultima_v_save.CharacterStatusMap[ultima_v_save.Poisoned], nil)
-	p.statusDropDown.AddOption(ultima_v_save.CharacterStatusMap[ultima_v_save.Sleep], nil)
-	p.statusDropDown.AddOption(ultima_v_save.CharacterStatusMap[ultima_v_save.Charmed], nil)
-	p.statusDropDown.AddOption(ultima_v_save.CharacterStatusMap[ultima_v_save.Dead], nil)
+
+	for _, val := range ultima_v_save.CharacterStatuses {
+		p.statusDropDown.AddOption(val.FriendlyName, nil)
+	}
 	p.Form.AddFormItem(p.statusDropDown)
 
 	// Gender
@@ -66,11 +65,11 @@ func (p *PartyCharacterDetails) Init(saveGame *ultima_v_save.SaveGame) {
 func updateClassDropDown(bIsAvatar bool, d *tview.DropDown) {
 	clearAllOptionsInDropDown(d)
 
-	d.AddOption(ultima_v_save.CharacterClassMap[ultima_v_save.Avatar], nil)
+	d.AddOption(ultima_v_save.CharacterClasses.GetStatusDetails(ultima_v_save.Avatar).FriendlyName, nil)
 	if !bIsAvatar {
-		d.AddOption(ultima_v_save.CharacterClassMap[ultima_v_save.Fighter], nil)
-		d.AddOption(ultima_v_save.CharacterClassMap[ultima_v_save.Bard], nil)
-		d.AddOption(ultima_v_save.CharacterClassMap[ultima_v_save.Wizard], nil)
+		d.AddOption(ultima_v_save.CharacterClasses.GetStatusDetails(ultima_v_save.Fighter).FriendlyName, nil)
+		d.AddOption(ultima_v_save.CharacterClasses.GetStatusDetails(ultima_v_save.Bard).FriendlyName, nil)
+		d.AddOption(ultima_v_save.CharacterClasses.GetStatusDetails(ultima_v_save.Wizard).FriendlyName, nil)
 	}
 	d.SetCurrentOption(0)
 }
@@ -98,9 +97,11 @@ func (p *PartyCharacterDetails) setPlayerFormValues(player *ultima_v_save.Player
 	}()
 	p.genderDropDown.SetCurrentOption(nGenderIndex)
 	// Class
-	setCurrentDropDownOptionsByClass(player.Class, p.classDropDown)
+	setDropDownOptionsByClass(player.Class, p.classDropDown)
 	// Level
 	p.levelInputField.SetText(fmt.Sprintf("%0d", player.Level))
 	// Exp
 	p.expInputField.SetText(fmt.Sprintf("%d", player.Exp))
+	// Status
+	setDropDownByStatus(player.Status, p.statusDropDown)
 }
