@@ -5,15 +5,6 @@ import (
 	"github.com/rivo/tview"
 )
 
-type HelpAndStatusBar struct {
-	Bar *tview.TextView
-}
-
-func (h *HelpAndStatusBar) Init() {
-	h.Bar = tview.NewTextView()
-	h.Bar.SetSize(1, 0)
-}
-
 type PartySummaryWidget struct {
 	Table *tview.Table
 

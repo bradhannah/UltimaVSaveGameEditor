@@ -74,7 +74,14 @@ func _initApp() {
 
 	app.helpAndStatusBar = &widgets.HelpAndStatusBar{}
 	app.helpAndStatusBar.Init()
-	app.helpAndStatusBar.Bar.SetText("OOF")
+
+	app.helpAndStatusBar.AppendKeyMap(widgets.KeyMaps{
+		Keys: []*tcell.EventKey{
+			tcell.NewEventKey(tcell.KeyUp, ' ', tcell.ModNone),
+		},
+		FunctionDesc: "Navigate",
+	})
+	app.helpAndStatusBar.Bar.SetText(app.helpAndStatusBar.GetHelpAndStatusStr())
 
 	app.mainFlex = tview.NewFlex()
 	app.mainFlex.AddItem(app.leftSidePages, 0, 1, false)

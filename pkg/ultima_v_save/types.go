@@ -15,23 +15,6 @@ const (
 	u16CurrentYear StartingMemoryAddressU16 = 0x2CE
 )
 
-//type ByteIdToFriendly struct {
-//	identifier   byte
-//	FriendlyName string
-//}
-
-//type CharacterStats struct {
-//	Name      string
-//	Class     CharacterClass
-//	CurrentMp byte
-//	MaximumMp byte
-//
-//	CurrentHp byte
-//	MaximumHp byte
-//
-//	ExperiencePoints uint16
-//}
-
 type PartyStatus byte
 
 const (
