@@ -1,7 +1,8 @@
 package widgets
 
 import (
-	"UltimaVSaveGameEditor/pkg/ultima_v_save"
+	//"UltimaVSaveGameEditor/pkg/ultima_v_save"
+	. "UltimaVSaveGameEditor/pkg/ultima_v_save"
 	"fmt"
 	"github.com/rivo/tview"
 )
@@ -9,7 +10,7 @@ import (
 type PartyCharacterDetails struct {
 	Form *tview.Form
 
-	SaveGame *ultima_v_save.SaveGame
+	SaveGame *SaveGame
 
 	nameInputField  *tview.InputField
 	genderDropDown  *tview.DropDown
@@ -19,33 +20,33 @@ type PartyCharacterDetails struct {
 	expInputField   *tview.InputField
 }
 
-func (p *PartyCharacterDetails) Init(saveGame *ultima_v_save.SaveGame) {
+func (p *PartyCharacterDetails) Init(saveGame *SaveGame) {
 	p.SaveGame = saveGame
 	p.Form = tview.NewForm()
 	p.Form.SetTitleAlign(tview.AlignTop)
 	p.Form.SetBorder(true)
 
 	// Name
-	p.nameInputField = createInputField("Name", "", ultima_v_save.NMaxPlayerNameSize)
-	p.nameInputField.SetAcceptanceFunc(createAcceptanceFunc(true, false, ultima_v_save.NMaxPlayerNameSize))
+	p.nameInputField = createInputField("Name", "", NMaxPlayerNameSize)
+	p.nameInputField.SetAcceptanceFunc(createAcceptanceFunc(true, false, NMaxPlayerNameSize))
 	p.Form.AddFormItem(p.nameInputField)
 
 	// Status
 	p.statusDropDown = createDropDown("Status", 8)
 
-	for _, val := range ultima_v_save.CharacterStatuses {
+	for _, val := range CharacterStatuses {
 		p.statusDropDown.AddOption(val.FriendlyName, nil)
 	}
 	p.Form.AddFormItem(p.statusDropDown)
 
 	// Gender
 	p.genderDropDown = createDropDown("Gender", 6)
-	p.genderDropDown.AddOption(ultima_v_save.CharacterGenderMap[ultima_v_save.Male], nil)
-	p.genderDropDown.AddOption(ultima_v_save.CharacterGenderMap[ultima_v_save.Female], nil)
+	p.genderDropDown.AddOption(CharacterGenders.GetById(Male).FriendlyName, nil)
+	p.genderDropDown.AddOption(CharacterGenders.GetById(Female).FriendlyName, nil)
 	p.Form.AddFormItem(p.genderDropDown)
 
 	// Class
-	p.classDropDown = createDropDown("Class", ultima_v_save.NMaxPlayerNameSize)
+	p.classDropDown = createDropDown("Class", NMaxPlayerNameSize)
 	updateClassDropDown(false, p.classDropDown)
 	p.Form.AddFormItem(p.classDropDown)
 
@@ -65,32 +66,32 @@ func (p *PartyCharacterDetails) Init(saveGame *ultima_v_save.SaveGame) {
 func updateClassDropDown(bIsAvatar bool, d *tview.DropDown) {
 	clearAllOptionsInDropDown(d)
 
-	d.AddOption(ultima_v_save.CharacterClasses.GetStatusDetails(ultima_v_save.Avatar).FriendlyName, nil)
+	d.AddOption(CharacterClasses.GetById(Avatar).FriendlyName, nil)
 	if !bIsAvatar {
-		d.AddOption(ultima_v_save.CharacterClasses.GetStatusDetails(ultima_v_save.Fighter).FriendlyName, nil)
-		d.AddOption(ultima_v_save.CharacterClasses.GetStatusDetails(ultima_v_save.Bard).FriendlyName, nil)
-		d.AddOption(ultima_v_save.CharacterClasses.GetStatusDetails(ultima_v_save.Wizard).FriendlyName, nil)
+		d.AddOption(CharacterClasses.GetById(Fighter).FriendlyName, nil)
+		d.AddOption(CharacterClasses.GetById(Bard).FriendlyName, nil)
+		d.AddOption(CharacterClasses.GetById(Wizard).FriendlyName, nil)
 	}
 	d.SetCurrentOption(0)
 }
 
 func (p *PartyCharacterDetails) SetPlayer(nPlayer int) {
-	if nPlayer < 0 || nPlayer >= ultima_v_save.NPlayers {
+	if nPlayer < 0 || nPlayer >= NPlayers {
 		// just in case
 		return
 	}
 	player := p.SaveGame.Characters[nPlayer]
 
-	updateClassDropDown(player.Class == ultima_v_save.Avatar, p.classDropDown)
+	updateClassDropDown(player.Class == Avatar, p.classDropDown)
 	p.setPlayerFormValues(&player)
 }
 
-func (p *PartyCharacterDetails) setPlayerFormValues(player *ultima_v_save.PlayerCharacter) {
+func (p *PartyCharacterDetails) setPlayerFormValues(player *PlayerCharacter) {
 	// Name
 	p.nameInputField.SetText(player.GetNameAsString())
 	// Gender
 	nGenderIndex := func() int {
-		if player.Gender == ultima_v_save.Male {
+		if player.Gender == Male {
 			return 0
 		}
 		return 1

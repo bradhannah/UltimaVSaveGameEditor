@@ -27,7 +27,7 @@ func (o *OrderedMapping[T]) GetIndex(thing T) int {
 	return -1
 }
 
-func (o *OrderedMapping[T]) GetStatusDetails(thing T) *IdToString[T] {
+func (o *OrderedMapping[T]) GetById(thing T) *IdToString[T] {
 	for _, val := range *o {
 		if val.Id == thing {
 			return &val

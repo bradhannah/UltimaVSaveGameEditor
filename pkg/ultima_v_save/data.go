@@ -26,21 +26,10 @@ const (
 )
 
 var CharacterClasses = OrderedMapping[CharacterClass]{
-	{
-		Id:           Avatar,
-		FriendlyName: "Avatar",
-	},
-	{
-		Id:           Fighter,
-		FriendlyName: "Fighter",
-	}, {
-		Id:           Bard,
-		FriendlyName: "Bard",
-	},
-	{
-		Id:           Wizard,
-		FriendlyName: "Wizard",
-	},
+	{Id: Avatar, FriendlyName: "Avatar"},
+	{Id: Fighter, FriendlyName: "Fighter"},
+	{Id: Bard, FriendlyName: "Bard"},
+	{Id: Wizard, FriendlyName: "Wizard"},
 }
 
 type CharacterStatus byte
@@ -54,26 +43,11 @@ const (
 )
 
 var CharacterStatuses = OrderedMapping[CharacterStatus]{
-	{
-		Id:           Good,
-		FriendlyName: "Good",
-	},
-	{
-		Id:           Poisoned,
-		FriendlyName: "Poisoned",
-	},
-	{
-		Id:           Charmed,
-		FriendlyName: "Charmed",
-	},
-	{
-		Id:           Sleep,
-		FriendlyName: "Sleep",
-	},
-	{
-		Id:           Dead,
-		FriendlyName: "Dead",
-	},
+	{Id: Good, FriendlyName: "Good"},
+	{Id: Poisoned, FriendlyName: "Poisoned"},
+	{Id: Charmed, FriendlyName: "Charmed"},
+	{Id: Sleep, FriendlyName: "Sleep"},
+	{Id: Dead, FriendlyName: "Dead"},
 }
 
 /*
@@ -87,14 +61,17 @@ const (
 	Female CharacterGender = 0x0C
 )
 
-var CharacterGenderMap = map[CharacterGender]string{
-	Male:   "Male",
-	Female: "Female",
+var CharacterGenders = OrderedMapping[CharacterGender]{
+	{Id: Male, FriendlyName: "Male"},
+	{Id: Female, FriendlyName: "Female"},
 }
 
 /*
 Other smaller definitions
 */
-const (
-	brit BritOrUnderworld = 'F'
-)
+//type BritOrUnderworld byte
+//
+//const (
+//	Britannia  BritOrUnderworld = 0xff
+//	Underworld BritOrUnderworld = 0x00
+//)
