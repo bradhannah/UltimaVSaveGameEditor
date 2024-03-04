@@ -18,9 +18,13 @@ type PartyCharacterDetails struct {
 	classDropDown   *tview.DropDown
 	levelInputField *tview.InputField
 	expInputField   *tview.InputField
+
+	helpAndStatusBar *HelpAndStatusBar
 }
 
-func (p *PartyCharacterDetails) Init(saveGame *SaveGame) {
+func (p *PartyCharacterDetails) Init(saveGame *SaveGame, helpAndStatusBar *HelpAndStatusBar) {
+	p.helpAndStatusBar = helpAndStatusBar
+
 	p.SaveGame = saveGame
 	p.Form = tview.NewForm()
 	p.Form.SetTitleAlign(tview.AlignTop)
@@ -60,7 +64,13 @@ func (p *PartyCharacterDetails) Init(saveGame *SaveGame) {
 	p.expInputField = createInputField("Exp", "0", 4)
 	p.expInputField.SetAcceptanceFunc(createNumericAcceptanceFunc(0, 9999))
 	p.Form.AddFormItem(p.expInputField)
+}
 
+func (p *PartyCharacterDetails) SetHelp() {
+	p.helpAndStatusBar.Clear()
+	p.helpAndStatusBar.Prefix = "[black:white]Character Select[-]"
+	p.helpAndStatusBar.AppendUpDownNav()
+	p.helpAndStatusBar.AppendQuit()
 }
 
 func updateClassDropDown(bIsAvatar bool, d *tview.DropDown) {
@@ -105,4 +115,25 @@ func (p *PartyCharacterDetails) setPlayerFormValues(player *PlayerCharacter) {
 	p.expInputField.SetText(fmt.Sprintf("%d", player.Exp))
 	// Status
 	setDropDownByStatus(player.Status, p.statusDropDown)
+}
+
+func (p *PartyCharacterDetails) SubComponentHasFocus() bool {
+	return p.GetFocus() != nil
+}
+
+func (p *PartyCharacterDetails) GetFocus() *tview.Primitive {
+	if p.Form.HasFocus() {
+		var prim = (tview.Primitive)(p.Form)
+		return &prim
+	}
+
+	for i := 0; i < p.Form.GetFormItemCount(); i++ {
+		item := p.Form.GetFormItem(i)
+		if item.HasFocus() {
+			prim := item.(tview.Primitive)
+			return &prim
+		}
+	}
+
+	return nil
 }

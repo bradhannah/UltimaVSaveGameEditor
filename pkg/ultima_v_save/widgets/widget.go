@@ -8,6 +8,11 @@ import (
 	"unicode"
 )
 
+type SubComponentContainer interface {
+	SubComponentHasFocus() bool
+	GetFocus() *tview.Primitive
+}
+
 func createHeaderCell(cellStr string) *tview.TableCell {
 	cell := tview.NewTableCell(cellStr)
 	cell.SetAttributes(defaultHeaderAttr)

@@ -35,11 +35,27 @@ func CreateInputHandlerTabToNext(next tview.Primitive) func(event *tcell.EventKe
 	}
 }
 
+func updateHelpMessage() {
+	if app.partySummaryWidget.SubComponentHasFocus() {
+		app.partySummaryWidget.SetHelp()
+	} else if app.playerCharacterDetailsWidget.SubComponentHasFocus() {
+		app.playerCharacterDetailsWidget.SetHelp()
+	} else {
+		app.helpAndStatusBar.Clear()
+	}
+}
+
 func globalInputHandler(eventKey *tcell.EventKey) *tcell.EventKey {
 	keyRune := eventKey.Rune()
-	if keyRune == 'q' || keyRune == 'Q' {
-		app.app.Stop()
-		return nil
+
+	if eventKey.Key() == tcell.KeyTab {
+		app.app.SetFocus(app.playerCharacterDetailsWidget.Form)
+	} else {
+		switch keyRune {
+		case 'q', 'Q':
+			app.app.Stop()
+			return nil
+		}
 	}
 
 	return eventKey
@@ -51,19 +67,22 @@ func _initApp() {
 		return
 	}
 
+	app.helpAndStatusBar = &widgets.HelpAndStatusBar{}
+	app.helpAndStatusBar.Init()
+
 	app.leftSidePages = tview.NewPages()
 	app.leftSidePages.AddPage("MainFlex", tview.NewBox().SetBorder(true), true, true)
 	app.leftSidePages.SetTitle("Edit")
 	app.leftSidePages.SetBorder(true)
-	//opof := tview.Primitive(*app.partySummaryWidget.Table))
-	//app.app.SetFocus(app.mainFlex)
 
 	app.partySummaryWidget = &widgets.PartySummaryWidget{}
-	app.partySummaryWidget.Init(SaveGame, func(nPlayer int, nJunk int) {
-		app.playerCharacterDetailsWidget.SetPlayer(nPlayer - 1)
-	})
+	app.partySummaryWidget.Init(SaveGame,
+		app.helpAndStatusBar,
+		func(nPlayer int, _ int) {
+			app.playerCharacterDetailsWidget.SetPlayer(nPlayer - 1)
+		})
 	app.playerCharacterDetailsWidget = &widgets.PartyCharacterDetails{}
-	app.playerCharacterDetailsWidget.Init(SaveGame)
+	app.playerCharacterDetailsWidget.Init(SaveGame, app.helpAndStatusBar)
 
 	app.rightSideGrid = tview.NewGrid()
 	app.rightSideGrid.SetTitle("Just da facts...")
@@ -71,17 +90,6 @@ func _initApp() {
 	app.rightSideGrid.SetColumns(0)
 	app.rightSideGrid.AddItem(app.partySummaryWidget.Table, 0, 0, 1, 1, 0, 0, false)
 	app.rightSideGrid.AddItem(app.playerCharacterDetailsWidget.Form, 1, 0, 1, 1, 0, 0, false)
-
-	app.helpAndStatusBar = &widgets.HelpAndStatusBar{}
-	app.helpAndStatusBar.Init()
-
-	app.helpAndStatusBar.AppendKeyMap(widgets.KeyMaps{
-		Keys: []*tcell.EventKey{
-			tcell.NewEventKey(tcell.KeyUp, ' ', tcell.ModNone),
-		},
-		FunctionDesc: "Navigate",
-	})
-	app.helpAndStatusBar.Bar.SetText(app.helpAndStatusBar.GetHelpAndStatusStr())
 
 	app.mainFlex = tview.NewFlex()
 	app.mainFlex.AddItem(app.leftSidePages, 0, 1, false)
@@ -95,16 +103,19 @@ func _initApp() {
 
 	app.partySummaryWidget.Table.SetFixed(7, 3)
 
-	//oof := tview.NewFlex()
-	//oof.AddItem(app.topGrid, 0, 1, true)
-	//app.app = tview.NewApplication().SetRoot(oof, true)
 	app.app = tview.NewApplication().SetRoot(app.topGrid, true)
 
 	app.app.EnableMouse(true)
 
 	app.app.SetInputCapture(globalInputHandler)
-
+	app.app.SetBeforeDrawFunc(func(screen tcell.Screen) bool {
+		// just before drawing, let's make sure we are showing correct help
+		updateHelpMessage()
+		return false
+	})
+	app.app.SetFocus(app.partySummaryWidget.Table)
 	app.leftSidePages.SetInputCapture(CreateInputHandlerTabToNext(app.partySummaryWidget.Table))
+
 }
 
 func main() {

@@ -11,9 +11,12 @@ type PartySummaryWidget struct {
 	header []*tview.TableCell
 
 	SaveGame *ultima_v_save.SaveGame
+
+	helpAndStatusBar *HelpAndStatusBar
 }
 
-func (p *PartySummaryWidget) Init(saveGame *ultima_v_save.SaveGame, selectionChangedFunc func(nPlayer int, nJunk int)) {
+func (p *PartySummaryWidget) Init(saveGame *ultima_v_save.SaveGame, helpAndStatusBar *HelpAndStatusBar, selectionChangedFunc func(nPlayer int, nJunk int)) {
+	p.helpAndStatusBar = helpAndStatusBar
 	p.SaveGame = saveGame
 
 	p.Table = tview.NewTable()
@@ -35,6 +38,14 @@ func (p *PartySummaryWidget) Init(saveGame *ultima_v_save.SaveGame, selectionCha
 	p.populateCharacters()
 }
 
+func (p *PartySummaryWidget) SetHelp() {
+	p.helpAndStatusBar.Clear()
+	p.helpAndStatusBar.Prefix = "Party List"
+	p.helpAndStatusBar.AppendUpDownNav()
+	p.helpAndStatusBar.AppendQuit()
+
+}
+
 func (p *PartySummaryWidget) populateCharacters() {
 	for i, character := range p.SaveGame.Characters {
 		row := i + 1
@@ -42,4 +53,16 @@ func (p *PartySummaryWidget) populateCharacters() {
 		p.Table.SetCell(row, 1, createDataCellStr(ultima_v_save.CharacterStatuses.GetById(character.Status).FriendlyName))
 		p.Table.SetCell(row, 2, createDataCellByte(character.Level))
 	}
+}
+
+func (p *PartySummaryWidget) SubComponentHasFocus() bool {
+	return p.GetFocus() != nil
+}
+
+func (p *PartySummaryWidget) GetFocus() *tview.Primitive {
+	if p.Table.HasFocus() {
+		var prim = (tview.Primitive)(p.Table)
+		return &prim
+	}
+	return nil
 }
