@@ -22,13 +22,13 @@ type KeyMaps struct {
 	FunctionDesc string
 }
 
-type HelpAndStatusBar struct {
+type HelpAndStatusBarWidget struct {
 	Bar     *tview.TextView
 	KeyMaps []KeyMaps
 	Prefix  string
 }
 
-func (h *HelpAndStatusBar) Init() {
+func (h *HelpAndStatusBarWidget) Init() {
 	h.Bar = tview.NewTextView()
 	h.Bar.SetSize(1, 0)
 	h.Bar.SetDynamicColors(true)
@@ -36,18 +36,18 @@ func (h *HelpAndStatusBar) Init() {
 	h.Clear()
 }
 
-func (h *HelpAndStatusBar) Clear() {
+func (h *HelpAndStatusBarWidget) Clear() {
 	h.KeyMaps = make([]KeyMaps, 0)
 	h.Prefix = ""
 	h.Bar.SetText("")
 }
 
-func (h *HelpAndStatusBar) AppendKeyMap(keyMap KeyMaps) *HelpAndStatusBar {
+func (h *HelpAndStatusBarWidget) AppendKeyMap(keyMap KeyMaps) *HelpAndStatusBarWidget {
 	h.KeyMaps = append(h.KeyMaps, keyMap)
 	return h
 }
 
-func (h *HelpAndStatusBar) GetHelpAndStatusStr() string {
+func (h *HelpAndStatusBarWidget) GetHelpAndStatusStr() string {
 	statusStr := ""
 	if h.Prefix != "" {
 		statusStr = fmt.Sprintf("[%s]%s[%s]  ", prefixColors, h.Prefix, resetColors)
@@ -86,7 +86,7 @@ func getAdjustedKey(key *tcell.EventKey) string {
 	}
 }
 
-func (h *HelpAndStatusBar) AppendUpDownNav() {
+func (h *HelpAndStatusBarWidget) AppendUpDownNav() {
 	h.AppendKeyMap(KeyMaps{
 		Keys: []*tcell.EventKey{
 			tcell.NewEventKey(tcell.KeyUp, ' ', tcell.ModNone),
@@ -96,7 +96,7 @@ func (h *HelpAndStatusBar) AppendUpDownNav() {
 	})
 }
 
-func (h *HelpAndStatusBar) AppendQuit() {
+func (h *HelpAndStatusBarWidget) AppendQuit() {
 	h.AppendKeyMap(KeyMaps{
 		Keys: []*tcell.EventKey{
 			tcell.NewEventKey(tcell.KeyRune, 'q', tcell.ModNone),

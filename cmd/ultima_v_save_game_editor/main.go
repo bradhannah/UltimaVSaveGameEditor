@@ -16,9 +16,9 @@ type UltimaVSaveGameEditorApp struct {
 	rightSideGrid *tview.Grid
 
 	partySummaryWidget           *widgets.PartySummaryWidget
-	playerCharacterDetailsWidget *widgets.PartyCharacterDetails
+	playerCharacterDetailsWidget *widgets.PartyCharacterDetailsWidget
 
-	helpAndStatusBar *widgets.HelpAndStatusBar
+	helpAndStatusBar *widgets.HelpAndStatusBarWidget
 }
 
 var app = UltimaVSaveGameEditorApp{}
@@ -67,7 +67,7 @@ func _initApp() {
 		return
 	}
 
-	app.helpAndStatusBar = &widgets.HelpAndStatusBar{}
+	app.helpAndStatusBar = &widgets.HelpAndStatusBarWidget{}
 	app.helpAndStatusBar.Init()
 
 	app.leftSidePages = tview.NewPages()
@@ -81,7 +81,7 @@ func _initApp() {
 		func(nPlayer int, _ int) {
 			app.playerCharacterDetailsWidget.SetPlayer(nPlayer - 1)
 		})
-	app.playerCharacterDetailsWidget = &widgets.PartyCharacterDetails{}
+	app.playerCharacterDetailsWidget = &widgets.PartyCharacterDetailsWidget{}
 	app.playerCharacterDetailsWidget.Init(SaveGame, app.helpAndStatusBar)
 
 	app.rightSideGrid = tview.NewGrid()

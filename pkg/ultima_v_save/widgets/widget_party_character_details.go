@@ -7,7 +7,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-type PartyCharacterDetails struct {
+type PartyCharacterDetailsWidget struct {
 	Form *tview.Form
 
 	SaveGame *SaveGame
@@ -19,10 +19,10 @@ type PartyCharacterDetails struct {
 	levelInputField *tview.InputField
 	expInputField   *tview.InputField
 
-	helpAndStatusBar *HelpAndStatusBar
+	helpAndStatusBar *HelpAndStatusBarWidget
 }
 
-func (p *PartyCharacterDetails) Init(saveGame *SaveGame, helpAndStatusBar *HelpAndStatusBar) {
+func (p *PartyCharacterDetailsWidget) Init(saveGame *SaveGame, helpAndStatusBar *HelpAndStatusBarWidget) {
 	p.helpAndStatusBar = helpAndStatusBar
 
 	p.SaveGame = saveGame
@@ -66,7 +66,7 @@ func (p *PartyCharacterDetails) Init(saveGame *SaveGame, helpAndStatusBar *HelpA
 	p.Form.AddFormItem(p.expInputField)
 }
 
-func (p *PartyCharacterDetails) SetHelp() {
+func (p *PartyCharacterDetailsWidget) SetHelp() {
 	p.helpAndStatusBar.Clear()
 	p.helpAndStatusBar.Prefix = "[black:white]Character Select[-]"
 	p.helpAndStatusBar.AppendUpDownNav()
@@ -85,7 +85,7 @@ func updateClassDropDown(bIsAvatar bool, d *tview.DropDown) {
 	d.SetCurrentOption(0)
 }
 
-func (p *PartyCharacterDetails) SetPlayer(nPlayer int) {
+func (p *PartyCharacterDetailsWidget) SetPlayer(nPlayer int) {
 	if nPlayer < 0 || nPlayer >= NPlayers {
 		// just in case
 		return
@@ -96,7 +96,7 @@ func (p *PartyCharacterDetails) SetPlayer(nPlayer int) {
 	p.setPlayerFormValues(&player)
 }
 
-func (p *PartyCharacterDetails) setPlayerFormValues(player *PlayerCharacter) {
+func (p *PartyCharacterDetailsWidget) setPlayerFormValues(player *PlayerCharacter) {
 	// Name
 	p.nameInputField.SetText(player.GetNameAsString())
 	// Gender
@@ -117,11 +117,11 @@ func (p *PartyCharacterDetails) setPlayerFormValues(player *PlayerCharacter) {
 	setDropDownByStatus(player.Status, p.statusDropDown)
 }
 
-func (p *PartyCharacterDetails) SubComponentHasFocus() bool {
+func (p *PartyCharacterDetailsWidget) SubComponentHasFocus() bool {
 	return p.GetFocus() != nil
 }
 
-func (p *PartyCharacterDetails) GetFocus() *tview.Primitive {
+func (p *PartyCharacterDetailsWidget) GetFocus() *tview.Primitive {
 	if p.Form.HasFocus() {
 		var prim = (tview.Primitive)(p.Form)
 		return &prim

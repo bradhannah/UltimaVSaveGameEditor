@@ -12,10 +12,10 @@ type PartySummaryWidget struct {
 
 	SaveGame *ultima_v_save.SaveGame
 
-	helpAndStatusBar *HelpAndStatusBar
+	helpAndStatusBar *HelpAndStatusBarWidget
 }
 
-func (p *PartySummaryWidget) Init(saveGame *ultima_v_save.SaveGame, helpAndStatusBar *HelpAndStatusBar, selectionChangedFunc func(nPlayer int, nJunk int)) {
+func (p *PartySummaryWidget) Init(saveGame *ultima_v_save.SaveGame, helpAndStatusBar *HelpAndStatusBarWidget, selectionChangedFunc func(nPlayer int, nJunk int)) {
 	p.helpAndStatusBar = helpAndStatusBar
 	p.SaveGame = saveGame
 
