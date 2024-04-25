@@ -1,7 +1,8 @@
-package widgets
+package widget_party_inventory
 
 import (
 	"UltimaVSaveGameEditor/pkg/ultima_v_save"
+	"UltimaVSaveGameEditor/pkg/ultima_v_save/widgets/widget_help_and_status_bar"
 	"github.com/rivo/tview"
 )
 
@@ -12,7 +13,7 @@ type PartyInventoryListWidget struct {
 
 	SaveGame *ultima_v_save.SaveGame
 
-	helpAndStatusBar *HelpAndStatusBarWidget
+	helpAndStatusBar *widget_help_and_status_bar.HelpAndStatusBarWidget
 }
 
 func (p *PartyInventoryListWidget) SetHelp() {
@@ -27,7 +28,7 @@ type InventoryItemDetailsWidget struct {
 
 	SaveGame *ultima_v_save.SaveGame
 
-	helpAndStatusBar *HelpAndStatusBarWidget
+	helpAndStatusBar *widget_help_and_status_bar.HelpAndStatusBarWidget
 }
 
 func (i *InventoryItemDetailsWidget) SetHelp() {
@@ -45,10 +46,10 @@ type PartyInventoryWidget struct {
 
 	SaveGame *ultima_v_save.SaveGame
 
-	helpAndStatusBar *HelpAndStatusBarWidget
+	helpAndStatusBar *widget_help_and_status_bar.HelpAndStatusBarWidget
 }
 
-func (p *PartyInventoryWidget) Init(saveGame *ultima_v_save.SaveGame, helpAndStatusBar *HelpAndStatusBarWidget) {
+func (p *PartyInventoryWidget) Init(saveGame *ultima_v_save.SaveGame, helpAndStatusBar *widget_help_and_status_bar.HelpAndStatusBarWidget) {
 	p.SaveGame = saveGame
 	p.helpAndStatusBar = helpAndStatusBar
 }

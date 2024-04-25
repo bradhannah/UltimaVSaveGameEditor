@@ -1,16 +1,20 @@
-package widgets
+package widget_party_character_details
 
 import (
 	//"UltimaVSaveGameEditor/pkg/ultima_v_save"
-	. "UltimaVSaveGameEditor/pkg/ultima_v_save"
+	. "UltimaVSaveGameEditor/pkg/ultima_v_save/game_state"
+	"UltimaVSaveGameEditor/pkg/ultima_v_save/widgets"
+	"UltimaVSaveGameEditor/pkg/ultima_v_save/widgets/widget_help_and_status_bar"
 	"fmt"
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
 type PartyCharacterDetailsWidget struct {
 	Form *tview.Form
 
-	SaveGame *SaveGame
+	OriginalGameState GameState
+	GameState         *GameState
 
 	nameInputField  *tview.InputField
 	genderDropDown  *tview.DropDown
@@ -19,24 +23,30 @@ type PartyCharacterDetailsWidget struct {
 	levelInputField *tview.InputField
 	expInputField   *tview.InputField
 
-	helpAndStatusBar *HelpAndStatusBarWidget
+	helpAndStatusBar *widget_help_and_status_bar.HelpAndStatusBarWidget
 }
 
-func (p *PartyCharacterDetailsWidget) Init(saveGame *SaveGame, helpAndStatusBar *HelpAndStatusBarWidget) {
+var partyCharacterDetailsWidget *PartyCharacterDetailsWidget
+
+func (p *PartyCharacterDetailsWidget) Init(saveGame *GameState, helpAndStatusBar *widget_help_and_status_bar.HelpAndStatusBarWidget) {
+	partyCharacterDetailsWidget = p
 	p.helpAndStatusBar = helpAndStatusBar
 
-	p.SaveGame = saveGame
+	p.GameState = saveGame
+	// make a copy of the data
+	p.OriginalGameState = *saveGame
+
 	p.Form = tview.NewForm()
 	p.Form.SetTitleAlign(tview.AlignTop)
 	p.Form.SetBorder(true)
 
 	// Name
-	p.nameInputField = createInputField("Name", "", NMaxPlayerNameSize)
-	p.nameInputField.SetAcceptanceFunc(createAcceptanceFunc(true, false, NMaxPlayerNameSize))
+	p.nameInputField = widgets.CreateInputField("Name", "", NMaxPlayerNameSize)
+	p.nameInputField.SetAcceptanceFunc(widgets.CreateAcceptanceFunc(true, false, NMaxPlayerNameSize))
 	p.Form.AddFormItem(p.nameInputField)
 
 	// Status
-	p.statusDropDown = createDropDown("Status", 8)
+	p.statusDropDown = widgets.CreateDropDown("Status", 8)
 
 	for _, val := range CharacterStatuses {
 		p.statusDropDown.AddOption(val.FriendlyName, nil)
@@ -44,26 +54,35 @@ func (p *PartyCharacterDetailsWidget) Init(saveGame *SaveGame, helpAndStatusBar 
 	p.Form.AddFormItem(p.statusDropDown)
 
 	// Gender
-	p.genderDropDown = createDropDown("Gender", 6)
+	p.genderDropDown = widgets.CreateDropDown("Gender", 6)
 	p.genderDropDown.AddOption(CharacterGenders.GetById(Male).FriendlyName, nil)
 	p.genderDropDown.AddOption(CharacterGenders.GetById(Female).FriendlyName, nil)
 	p.Form.AddFormItem(p.genderDropDown)
 
 	// Class
-	p.classDropDown = createDropDown("Class", NMaxPlayerNameSize)
+	p.classDropDown = widgets.CreateDropDown("Class", NMaxPlayerNameSize)
 	updateClassDropDown(false, p.classDropDown)
 	p.Form.AddFormItem(p.classDropDown)
 
 	// Level
-	p.levelInputField = createInputField("Level", "1", 1)
-	p.levelInputField.SetAcceptanceFunc(createNumericAcceptanceFunc(1, 9))
+	p.levelInputField = widgets.CreateInputField("Level", "1", 1)
+	p.levelInputField.SetAcceptanceFunc(widgets.CreateNumericAcceptanceFunc(1, 9))
 	p.levelInputField.SetPlaceholder("1")
 	p.Form.AddFormItem(p.levelInputField)
 
 	// XP
-	p.expInputField = createInputField("Exp", "0", 4)
-	p.expInputField.SetAcceptanceFunc(createNumericAcceptanceFunc(0, 9999))
+	p.expInputField = widgets.CreateInputField("Exp", "0", 4)
+	p.expInputField.SetAcceptanceFunc(widgets.CreateNumericAcceptanceFunc(0, 9999))
 	p.Form.AddFormItem(p.expInputField)
+
+	p.Form.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if event.Key() == tcell.KeyEsc {
+			partyCharacterDetailsWidget.SaveChanges()
+			return nil
+		}
+		return event
+	},
+	)
 }
 
 func (p *PartyCharacterDetailsWidget) SetHelp() {
@@ -74,7 +93,7 @@ func (p *PartyCharacterDetailsWidget) SetHelp() {
 }
 
 func updateClassDropDown(bIsAvatar bool, d *tview.DropDown) {
-	clearAllOptionsInDropDown(d)
+	widgets.ClearAllOptionsInDropDown(d)
 
 	d.AddOption(CharacterClasses.GetById(Avatar).FriendlyName, nil)
 	if !bIsAvatar {
@@ -90,13 +109,16 @@ func (p *PartyCharacterDetailsWidget) SetPlayer(nPlayer int) {
 		// just in case
 		return
 	}
-	player := p.SaveGame.Characters[nPlayer]
+	player := p.GameState.Characters[nPlayer]
 
 	updateClassDropDown(player.Class == Avatar, p.classDropDown)
 	p.setPlayerFormValues(&player)
 }
 
+var currentPlayer PlayerCharacter
+
 func (p *PartyCharacterDetailsWidget) setPlayerFormValues(player *PlayerCharacter) {
+	currentPlayer = *player
 	// Name
 	p.nameInputField.SetText(player.GetNameAsString())
 	// Gender
@@ -108,13 +130,13 @@ func (p *PartyCharacterDetailsWidget) setPlayerFormValues(player *PlayerCharacte
 	}()
 	p.genderDropDown.SetCurrentOption(nGenderIndex)
 	// Class
-	setDropDownOptionsByClass(player.Class, p.classDropDown)
+	widgets.SetDropDownOptionsByClass(player.Class, p.classDropDown)
 	// Level
 	p.levelInputField.SetText(fmt.Sprintf("%0d", player.Level))
 	// Exp
 	p.expInputField.SetText(fmt.Sprintf("%d", player.Exp))
 	// Status
-	setDropDownByStatus(player.Status, p.statusDropDown)
+	widgets.SetDropDownByStatus(player.Status, p.statusDropDown)
 }
 
 func (p *PartyCharacterDetailsWidget) SubComponentHasFocus() bool {
@@ -135,5 +157,16 @@ func (p *PartyCharacterDetailsWidget) GetFocus() *tview.Primitive {
 		}
 	}
 
+	return nil
+}
+
+func (p *PartyCharacterDetailsWidget) SaveChanges() error {
+
+	for nPlayer, player := range p.GameState.Characters {
+		err := p.GameState.SaveCharactersOnSave("/Users/bradhannah/Google Drive/My Drive/games/u5/Games/Ultima_5/Gold/SAVED.GAM", uint(nPlayer), player)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }

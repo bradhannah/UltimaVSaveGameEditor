@@ -1,4 +1,7 @@
-package ultima_v_save
+package game_state
+
+const savedGamFileSize = 4192
+const startPositionOfCharacters = 0x02
 
 type StartingMemoryAddressUb uint16
 type StartingMemoryAddressU16 uint16
@@ -85,7 +88,8 @@ const (
 	InInventory                 = 0xFF
 )
 
-type SaveGame struct {
+type GameState struct {
+	RawSave          [savedGamFileSize]byte
 	Characters       [NPlayers]PlayerCharacter
 	Location         Location
 	BritOrUnderworld BritOrUnderworld

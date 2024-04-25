@@ -4,6 +4,6 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-const bDebugBorders = true
+const BDebugBorders = true
 const defaultHeaderColor = tcell.ColorYellow
 const defaultHeaderAttr = tcell.AttrBold

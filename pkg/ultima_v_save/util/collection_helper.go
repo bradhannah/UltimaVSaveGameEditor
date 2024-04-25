@@ -1,4 +1,4 @@
-package ultima_v_save
+package util
 
 func FindIndexFromSliceT[T comparable](arr []T, target T) int {
 	for i, v := range arr {

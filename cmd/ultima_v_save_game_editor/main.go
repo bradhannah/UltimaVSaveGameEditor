@@ -1,8 +1,10 @@
 package main
 
 import (
-	"UltimaVSaveGameEditor/pkg/ultima_v_save"
-	"UltimaVSaveGameEditor/pkg/ultima_v_save/widgets"
+	"UltimaVSaveGameEditor/pkg/ultima_v_save/game_state"
+	"UltimaVSaveGameEditor/pkg/ultima_v_save/widgets/widget_help_and_status_bar"
+	"UltimaVSaveGameEditor/pkg/ultima_v_save/widgets/widget_party_character_details"
+	"UltimaVSaveGameEditor/pkg/ultima_v_save/widgets/widget_party_summary"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -15,15 +17,17 @@ type UltimaVSaveGameEditorApp struct {
 
 	rightSideGrid *tview.Grid
 
-	partySummaryWidget           *widgets.PartySummaryWidget
-	playerCharacterDetailsWidget *widgets.PartyCharacterDetailsWidget
+	partySummaryWidget           *widget_party_summary.PartySummaryWidget
+	playerCharacterDetailsWidget *widget_party_character_details.PartyCharacterDetailsWidget
 
-	helpAndStatusBar *widgets.HelpAndStatusBarWidget
+	helpAndStatusBar *widget_help_and_status_bar.HelpAndStatusBarWidget
+
+	OriginalSaveGameState *game_state.GameState
 }
 
 var app = UltimaVSaveGameEditorApp{}
 
-var SaveGame = ultima_v_save.SaveGame{}
+//var SaveGame = ultima_v_save.SaveGame{}
 
 func CreateInputHandlerTabToNext(next tview.Primitive) func(event *tcell.EventKey) *tcell.EventKey {
 	return func(event *tcell.EventKey) *tcell.EventKey {
@@ -62,12 +66,15 @@ func globalInputHandler(eventKey *tcell.EventKey) *tcell.EventKey {
 }
 
 func _initApp() {
-	SaveGame, err := ultima_v_save.GetCharactersFromSave("/Users/bradhannah/Google Drive/My Drive/games/u5/Games/Ultima_5/Gold/SAVED.GAM")
+	var originalGameState game_state.GameState
+	app.OriginalSaveGameState = &originalGameState
+
+	err := originalGameState.LoadSaveGame("/Users/bradhannah/Google Drive/My Drive/games/u5/Games/Ultima_5/Gold/SAVED.GAM")
 	if err != nil {
 		return
 	}
 
-	app.helpAndStatusBar = &widgets.HelpAndStatusBarWidget{}
+	app.helpAndStatusBar = &widget_help_and_status_bar.HelpAndStatusBarWidget{}
 	app.helpAndStatusBar.Init()
 
 	app.leftSidePages = tview.NewPages()
@@ -75,14 +82,14 @@ func _initApp() {
 	app.leftSidePages.SetTitle("Edit")
 	app.leftSidePages.SetBorder(true)
 
-	app.partySummaryWidget = &widgets.PartySummaryWidget{}
-	app.partySummaryWidget.Init(SaveGame,
+	app.partySummaryWidget = &widget_party_summary.PartySummaryWidget{}
+	app.partySummaryWidget.Init(&originalGameState,
 		app.helpAndStatusBar,
 		func(nPlayer int, _ int) {
 			app.playerCharacterDetailsWidget.SetPlayer(nPlayer - 1)
 		})
-	app.playerCharacterDetailsWidget = &widgets.PartyCharacterDetailsWidget{}
-	app.playerCharacterDetailsWidget.Init(SaveGame, app.helpAndStatusBar)
+	app.playerCharacterDetailsWidget = &widget_party_character_details.PartyCharacterDetailsWidget{}
+	app.playerCharacterDetailsWidget.Init(&originalGameState, app.helpAndStatusBar)
 
 	app.rightSideGrid = tview.NewGrid()
 	app.rightSideGrid.SetTitle("Just da facts...")

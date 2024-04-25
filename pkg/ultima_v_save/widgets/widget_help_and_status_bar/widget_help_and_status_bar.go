@@ -1,4 +1,4 @@
-package widgets
+package widget_help_and_status_bar
 
 import (
 	"fmt"

@@ -1,7 +1,7 @@
 package widgets
 
 import (
-	"UltimaVSaveGameEditor/pkg/ultima_v_save"
+	"UltimaVSaveGameEditor/pkg/ultima_v_save/game_state"
 	"fmt"
 	"github.com/rivo/tview"
 	"strconv"
@@ -13,7 +13,7 @@ type SubComponentContainer interface {
 	GetFocus() *tview.Primitive
 }
 
-func createHeaderCell(cellStr string) *tview.TableCell {
+func CreateHeaderCell(cellStr string) *tview.TableCell {
 	cell := tview.NewTableCell(cellStr)
 	cell.SetAttributes(defaultHeaderAttr)
 	cell.SetTextColor(defaultHeaderColor)
@@ -21,24 +21,24 @@ func createHeaderCell(cellStr string) *tview.TableCell {
 	return cell
 }
 
-func createDataCellStr(cellStr string) *tview.TableCell {
+func CreateDataCellStr(cellStr string) *tview.TableCell {
 	cell := tview.NewTableCell(cellStr)
 	return cell
 }
 
-func createDataCellByte(cellByte byte) *tview.TableCell {
-	cell := createDataCellStr(fmt.Sprintf("%d", cellByte))
+func CreateDataCellByte(cellByte byte) *tview.TableCell {
+	cell := CreateDataCellStr(fmt.Sprintf("%d", cellByte))
 	cell.SetMaxWidth(3) // typically 0-99 or 0-255
 	return cell
 }
 
 func createDataCellNum(integer int) *tview.TableCell {
-	cell := createDataCellStr(fmt.Sprintf("%d", integer))
+	cell := CreateDataCellStr(fmt.Sprintf("%d", integer))
 	cell.SetMaxWidth(4) // 0 - 9999
 	return cell
 }
 
-func createInputField(label string, field string, nMaxLength int) *tview.InputField {
+func CreateInputField(label string, field string, nMaxLength int) *tview.InputField {
 	inputField := tview.NewInputField()
 
 	inputField.SetLabelWidth(nMaxLength)
@@ -49,7 +49,7 @@ func createInputField(label string, field string, nMaxLength int) *tview.InputFi
 	return inputField
 }
 
-func createAcceptanceFunc(bOnlyAlpha bool, bOnlyNumber bool, nMaxSize int) func(string, rune) bool {
+func CreateAcceptanceFunc(bOnlyAlpha bool, bOnlyNumber bool, nMaxSize int) func(string, rune) bool {
 	return func(textToCheck string, lastChar rune) bool {
 		nTextLength := len(textToCheck)
 		bIsCharacterNumber := unicode.IsNumber(lastChar)
@@ -70,7 +70,7 @@ func createAcceptanceFunc(bOnlyAlpha bool, bOnlyNumber bool, nMaxSize int) func(
 	}
 }
 
-func createNumericAcceptanceFunc(nMinSize uint16, nMaxSize uint16) func(string, rune) bool {
+func CreateNumericAcceptanceFunc(nMinSize uint16, nMaxSize uint16) func(string, rune) bool {
 	return func(textToCheck string, lastChar rune) bool {
 		nTextLength := len(textToCheck)
 		if nTextLength == 0 {
@@ -96,24 +96,24 @@ func createNumericAcceptanceFunc(nMinSize uint16, nMaxSize uint16) func(string, 
 	}
 }
 
-func createDropDown(label string, nWidth int) *tview.DropDown {
+func CreateDropDown(label string, nWidth int) *tview.DropDown {
 	dropDown := tview.NewDropDown()
 	dropDown.SetFieldWidth(nWidth)
 	dropDown.SetLabel(label)
 	return dropDown
 }
 
-func setDropDownOptionsByClass(characterClass ultima_v_save.CharacterClass, dropDown *tview.DropDown) {
-	nIndex := ultima_v_save.CharacterClasses.GetIndex(characterClass)
+func SetDropDownOptionsByClass(characterClass game_state.CharacterClass, dropDown *tview.DropDown) {
+	nIndex := game_state.CharacterClasses.GetIndex(characterClass)
 	dropDown.SetCurrentOption(nIndex)
 }
 
-func setDropDownByStatus(status ultima_v_save.CharacterStatus, dropDown *tview.DropDown) {
-	nIndex := ultima_v_save.CharacterStatuses.GetIndex(status)
+func SetDropDownByStatus(status game_state.CharacterStatus, dropDown *tview.DropDown) {
+	nIndex := game_state.CharacterStatuses.GetIndex(status)
 	dropDown.SetCurrentOption(nIndex)
 }
 
-func clearAllOptionsInDropDown(d *tview.DropDown) {
+func ClearAllOptionsInDropDown(d *tview.DropDown) {
 	for i := d.GetOptionCount() - 1; i >= 0; i-- {
 		d.RemoveOption(i)
 	}

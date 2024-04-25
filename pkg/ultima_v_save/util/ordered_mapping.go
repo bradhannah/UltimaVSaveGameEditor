@@ -1,4 +1,4 @@
-package ultima_v_save
+package util
 
 // this is inefficient, but handy so small sets of data that need a mapping
 // to a string from a generic typed variable - but it is ordered.

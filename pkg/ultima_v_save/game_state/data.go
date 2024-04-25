@@ -1,4 +1,8 @@
-package ultima_v_save
+package game_state
+
+import (
+	"UltimaVSaveGameEditor/pkg/ultima_v_save/util"
+)
 
 /*
 enum <ubyte> PartyStatus { InTheParty = 0x00, HasntJoinedYet = 0xFF, AtTheInn = 0x01 };
@@ -25,7 +29,7 @@ const (
 	Wizard  CharacterClass = 'M'
 )
 
-var CharacterClasses = OrderedMapping[CharacterClass]{
+var CharacterClasses = util.OrderedMapping[CharacterClass]{
 	{Id: Avatar, FriendlyName: "Avatar"},
 	{Id: Fighter, FriendlyName: "Fighter"},
 	{Id: Bard, FriendlyName: "Bard"},
@@ -42,7 +46,7 @@ const (
 	Dead     CharacterStatus = 'D'
 )
 
-var CharacterStatuses = OrderedMapping[CharacterStatus]{
+var CharacterStatuses = util.OrderedMapping[CharacterStatus]{
 	{Id: Good, FriendlyName: "Good"},
 	{Id: Poisoned, FriendlyName: "Poisoned"},
 	{Id: Charmed, FriendlyName: "Charmed"},
@@ -61,7 +65,7 @@ const (
 	Female CharacterGender = 0x0C
 )
 
-var CharacterGenders = OrderedMapping[CharacterGender]{
+var CharacterGenders = util.OrderedMapping[CharacterGender]{
 	{Id: Male, FriendlyName: "Male"},
 	{Id: Female, FriendlyName: "Female"},
 }
